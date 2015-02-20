@@ -1,5 +1,15 @@
 @import '../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/normalize';
 
+@font-face {
+    font-family: 'conqueror_sanslight_italic';
+    src: url('../font/conquerorsans-lightitalic-webfont.eot');
+    src: url('../font/conquerorsans-lightitalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/conquerorsans-lightitalic-webfont.woff') format('woff'),
+         url('../font/conquerorsans-lightitalic-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     // fix bold fonts on mac
     -webkit-font-smoothing: antialiased;
@@ -10,4 +20,90 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    position: relative;
+    background-color: transparent;
+    font-family: 'conqueror_sanslight_italic';
+}
+
+// div {
+//     position: absolute;
+//     left: 0;
+//     top: 0;
+//     width: 100%;
+//     height: 100%;
+// }
+
+.interface, .overlay, .bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.overlay {
+    // display: none;
+    // background: transparent url('../img/overlay.svg') 50% 50% no-repeat;
+    // background: transparent url('../img/overlay.png') 50% 50% no-repeat;
+    // background: transparent radial-gradient(circle farthest-corner at 50% 50% , rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%) 50% 50% no-repeat;
+    background-size: cover;
+    z-index: 10;
+}
+.bg {
+    // display: none;
+    // background-color: #102037;
+    // background: transparent url('../img/bg3.png') 50% 50% no-repeat;
+    // background: transparent url('../img/bg.svg') 50% 50% no-repeat;
+    // background: #102037 radial-gradient(circle farthest-corner at 50% 50% , rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%) 50% 50% no-repeat;
+    background-size: cover;
+    z-index: -10;
+}
+
+.interface {
+
+}
+
+.connect {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 400px;
+    height: 300px;
+    margin-top: -100px;
+    margin-left: -200px;
+    // outline: 1px solid #fff;
+    text-align: center;
+    color: #fff;
+}
+
+.connect-img {
+
+}
+
+.connect-text {
+    text-transform: uppercase;
+    font-size: 20px;
+    line-height: 24px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.connect-info {
+    font-size: 18px;
+    line-height: 18px;
+    text-align: left;
+}
+
+.content-info-qr {
+    display: inline-block;
+    width: 82px;
+    height: 82px;
+    background-color: #fff;
+    // vertical-align: top;
+}
+
+.content-info-text {
+    margin-left: 35px;
+    display: inline-block;
+    vertical-align: top;
 }

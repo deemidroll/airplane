@@ -8,6 +8,8 @@ var camera, scene, renderer;
 
 var obj;
 
+var planet, planet2, planet3, planet4;
+
 function onWindowResize() {
 
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -49,16 +51,19 @@ function init() {
 
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
     camera.position.y = 0;
-    camera.position.z = 20;
+    camera.position.z = 30;
+    // camera.setLens ( 0, 100 )
     scene.add( camera );
 
     //
 
-    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer = new THREE.WebGLRenderer( {
+        antialias: true,
+    } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.setClearColor( 0xffffff );
-    renderer.shadowMapEnabled = true;
+    renderer.setClearColor( 0x102037 );
+    // renderer.shadowMapEnabled = true;
 
     container.appendChild( renderer.domElement );
 
@@ -73,13 +78,21 @@ function init() {
     var loader = new THREE.OBJLoader(manager);
 
     obj = new THREE.Object3D();
-    obj.castShadow = true;
+    // obj.castShadow = true;
 
-    loader.load('./obj/airplane.obj', function (object) {
-        // var color2 = '#F3F3F5',
-            // color1 = '#B1B2B6';
-        var color2 = '#4DC8F9',
-            color1 = '#1880B4';
+    loader.load('./obj/airplane10.obj', function (object) {
+        // white
+        var color2 = '#F3F3F5',
+            color1 = '#B1B2B6';
+        // blue
+        // var color2 = '#4DC8F9',
+            // color1 = '#1880B4';
+        // red
+        // var color2 = '#00BDDA',
+            // color1 = '#13608A';
+        // green
+        // var color2 = '#C2D900',
+            // color1 = '#65BD2E';
 
         var texture = new THREE.Texture(generateTexture(color1, color2));
         var texture2 = new THREE.Texture(generateTexture(color2, color1));
@@ -101,10 +114,97 @@ function init() {
 
         obj.add(object);
         obj.add(object2);
-        obj.scale.multiplyScalar(0.1);
+        obj.scale.set(0.05, 0.05, 0.05);
         obj.rotation.z = Math.PI;
+        obj.rotation.x = Math.PI/12;
+
+        obj.rotation.x += Math.PI/12;
+        obj.rotation.z -=Math.PI/24;
+        obj.rotation.y = -Math.PI/6;
+
+        obj.position.x = 1;
+        obj.position.y = 8;
     });
     scene.add(obj);
+
+    //pan
+    // var gBG = new THREE.SphereGeometry(20, 60, 40);
+    // gBG.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+
+    // var mBG = new THREE.MeshBasicMaterial({
+    //     map: THREE.ImageUtils.loadTexture( './img/space.png' )
+    // });
+
+    // mesh = new THREE.Mesh( gBG, mBG );
+    // // mesh.position.y = 20;
+    // // mesh.position.z = -100;
+    // scene.add( mesh );
+
+    var gP = new THREE.SphereGeometry( 2, 60, 40 );
+    // gP.applyMatrix( new THREE.Matrix4().makeScale( -1, 1, 1 ) );
+
+    var mP = new THREE.MeshLambertMaterial({
+        color: 0x43FFD9,
+        map: THREE.ImageUtils.loadTexture( './img/texture1.jpg' )
+    });
+
+    planet = new THREE.Mesh(gP, mP );
+    planet.position.x = -15;
+    planet.position.y = -7;
+    // planet.position.z = -55;
+    planet.position.z = -5;
+    scene.add( planet );
+
+    var gP2 = new THREE.SphereGeometry( 3, 60, 40 );
+    var mP2 = new THREE.MeshLambertMaterial({
+        color: 0xFE147A,
+    });
+    planet2 = new THREE.Mesh(gP2, mP2 );
+    planet2.position.x = 22;
+    planet2.position.y = 10;
+    planet2.position.z = -10;
+    scene.add( planet2 );
+
+    var gP3 = new THREE.SphereGeometry( 2, 60, 40 );
+    var mP3 = new THREE.MeshLambertMaterial({
+        color: 0x43FFD9,
+    });
+    planet3 = new THREE.Mesh(gP3, mP3 );
+    planet3.position.x = 20;
+    planet3.position.y = 1;
+    planet3.position.z = -20;
+    scene.add( planet3 );
+
+    var gP4 = new THREE.SphereGeometry( 2, 60, 40 );
+    var mP4 = new THREE.MeshLambertMaterial({
+        color: 0xE7C08C,
+    });
+    planet4 = new THREE.Mesh(gP4, mP4 );
+    planet4.position.x = -24;
+    planet4.position.y = 10;
+    planet4.position.z = -30;
+    scene.add( planet4 );
+
+    // var gP5 = new THREE.SphereGeometry( 9, 60, 40 );
+    // var mP5 = new THREE.MeshLambertMaterial({
+    //     color: 0xffffff,
+    // });
+    // planet5 = new THREE.Mesh(gP5, mP5 );
+    // planet5.position.x = 0;
+    // planet5.position.y = 20;
+    // planet5.position.z = -20;
+    // scene.add( planet5 );
+
+
+    var ambient = new THREE.AmbientLight( 0x344163 );
+    scene.add( ambient );
+
+    var sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
+    var light = new THREE.PointLight( 0xffffff, 0.75, 500 );
+    light.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0x43FFD9 } ) ) );
+    light.position.y = 8.3;
+    light.position.z = 10;
+    scene.add( light );
 
 }
 
@@ -112,6 +212,25 @@ init();
 
 animate(0, function () {
     renderer.render(scene, camera);
+    // planet.position.z += 0.5;
+    // planet2.position.z += 0.5;
+    // planet3.position.z += 0.5;
+    // planet4.position.z += 0.5;
+    planet.rotation.y += 0.01;
     // obj.rotation.x += 0.01;
-    obj.rotation.y += 0.01;
+    // obj.rotation.y -= 0.0025;
+    // mesh.rotation.x -= 0.001;
+    // mesh.rotation.y -= 0.001;
+    if (planet.position.z  >10) {
+        planet.position.z = -200;
+    }
+    if (planet2.position.z  >10) {
+        planet2.position.z = -200;
+    }
+    if (planet3.position.z  >10) {
+        planet3.position.z = -200;
+    }
+    if (planet4.position.z  >10) {
+        planet4.position.z = -200;
+    }
 });
