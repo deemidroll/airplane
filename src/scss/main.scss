@@ -60,17 +60,20 @@ html, body {
 }
 
 .interface {
-
+    &.hidden {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s ease 0s;
+    }
 }
 
 .connect {
     position: absolute;
-    left: 50%;
+    left: 0;
     top: 50%;
-    width: 400px;
+    width: 100%;
     height: 300px;
     margin-top: -100px;
-    margin-left: -200px;
     // outline: 1px solid #fff;
     text-align: center;
     color: #fff;
@@ -91,19 +94,18 @@ html, body {
 .connect-info {
     font-size: 18px;
     line-height: 18px;
-    text-align: left;
 }
 
 .content-info-qr {
     display: inline-block;
-    width: 82px;
-    height: 82px;
-    background-color: #fff;
-    // vertical-align: top;
+    width: 150px;
+    height: 150px;
+    vertical-align: middle;
 }
 
 .content-info-text {
     margin-left: 35px;
     display: inline-block;
-    vertical-align: top;
+    vertical-align: middle;
+    text-align: left;
 }

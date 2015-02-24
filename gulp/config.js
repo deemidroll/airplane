@@ -35,8 +35,12 @@ module.exports = {
         // bundle config in the list below
         bundleConfigs: [{
             entries: './src/js/main.js',
-            dest: dest,
+            dest: dest + '/js',
             outputName: 'app.js'
+        }, {
+            entries: './src/js/mobile.js',
+            dest: dest + '/js',
+            outputName: 'mobile.js'
         }]
     },
     banner: 'Made by deemidroll | 2014 | deemidroll@gmail.com'

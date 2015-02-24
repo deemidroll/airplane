@@ -5,7 +5,7 @@
 var gulp = require('gulp'),
     sass = require('gulp-ruby-sass'),
     prefix = require('gulp-autoprefixer'),
-    concat = require('gulp-concat'),
+    // concat = require('gulp-concat'),
     minifycss = require('gulp-minify-css'),
     handleErrors = require('../util/handleErrors'),
     config = require('../config'),
@@ -28,7 +28,7 @@ gulp.task('sass', function() {
         .pipe(prefix('last 3 version'))
         // only minify in production
         .pipe(gulpif(options.env === 'prod', minifycss()))
-        .pipe(concat('app.css'))
+        // .pipe(concat('app.css'))
         .pipe(header(banner))
         .on('error', handleErrors)
         .pipe(gulp.dest(config.sass.dest));

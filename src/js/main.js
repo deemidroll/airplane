@@ -1,12 +1,51 @@
 var Detector = window.Detector;
 var THREE = window.THREE;
 var animate = require('./animate.js');
+var socket = require('./socket.js');
+var $ = window.$;
+
+var $document = $(document);
+
+var $address = $('#address');
+var $interface = $('.interface');
+
+socket.init();
+
+var gameStarted = false;
+
+var airplane;
+
+$document.on('socketInitialized', function (e, data) {
+    var address = window.location.origin + '/m/#' + data.gameCode;
+    $('.content-info-qr').qrcode({
+        render: 'div',
+        size: 150,
+        fill: '#fff',
+        text: address
+    });
+    $address.text(address);
+});
+
+$document.on('turn', function (e, data) {
+    airplane.rotation.z = Math.PI - data.turn/180;
+});
+
+$document.on('socketConnected', function () {
+    $interface.addClass('hidden');
+    gameStarted = true;
+
+
+    airplane.rotation.x = Math.PI/12;
+    airplane.rotation.y = 0;
+    airplane.rotation.z = Math.PI;
+
+    airplane.position.x = 0;
+    airplane.position.y = 0;
+});
 
 if (! Detector.webgl) Detector.addGetWebGLMessage();
 
 var camera, scene, renderer;
-
-var obj;
 
 var planet, planet2, planet3, planet4;
 
@@ -77,7 +116,7 @@ function init() {
 
     var loader = new THREE.OBJLoader(manager);
 
-    obj = new THREE.Object3D();
+    airplane = new THREE.Object3D();
     // obj.castShadow = true;
 
     loader.load('./obj/airplane10.obj', function (object) {
@@ -112,20 +151,20 @@ function init() {
         });
         object2.position.y = 0.01;
 
-        obj.add(object);
-        obj.add(object2);
-        obj.scale.set(0.05, 0.05, 0.05);
-        obj.rotation.z = Math.PI;
-        obj.rotation.x = Math.PI/12;
+        airplane.add(object);
+        airplane.add(object2);
+        airplane.scale.set(0.05, 0.05, 0.05);
+        airplane.rotation.z = Math.PI;
+        airplane.rotation.x = Math.PI/12;
 
-        obj.rotation.x += Math.PI/12;
-        obj.rotation.z -=Math.PI/24;
-        obj.rotation.y = -Math.PI/6;
+        airplane.rotation.x += Math.PI/12;
+        airplane.rotation.z -=Math.PI/24;
+        airplane.rotation.y = -Math.PI/6;
 
-        obj.position.x = 1;
-        obj.position.y = 8;
+        airplane.position.x = 1;
+        airplane.position.y = 8;
     });
-    scene.add(obj);
+    scene.add(airplane);
 
     //pan
     // var gBG = new THREE.SphereGeometry(20, 60, 40);
@@ -139,13 +178,14 @@ function init() {
     // // mesh.position.y = 20;
     // // mesh.position.z = -100;
     // scene.add( mesh );
+    var tP = THREE.ImageUtils.loadTexture( './img/noise.jpg' );
 
     var gP = new THREE.SphereGeometry( 2, 60, 40 );
     // gP.applyMatrix( new THREE.Matrix4().makeScale( -1, 1, 1 ) );
 
     var mP = new THREE.MeshLambertMaterial({
         color: 0x43FFD9,
-        map: THREE.ImageUtils.loadTexture( './img/texture1.jpg' )
+        map: tP
     });
 
     planet = new THREE.Mesh(gP, mP );
@@ -158,6 +198,7 @@ function init() {
     var gP2 = new THREE.SphereGeometry( 3, 60, 40 );
     var mP2 = new THREE.MeshLambertMaterial({
         color: 0xFE147A,
+        map: tP
     });
     planet2 = new THREE.Mesh(gP2, mP2 );
     planet2.position.x = 22;
@@ -168,6 +209,7 @@ function init() {
     var gP3 = new THREE.SphereGeometry( 2, 60, 40 );
     var mP3 = new THREE.MeshLambertMaterial({
         color: 0x43FFD9,
+        map: tP
     });
     planet3 = new THREE.Mesh(gP3, mP3 );
     planet3.position.x = 20;
@@ -178,6 +220,7 @@ function init() {
     var gP4 = new THREE.SphereGeometry( 2, 60, 40 );
     var mP4 = new THREE.MeshLambertMaterial({
         color: 0xE7C08C,
+        map: tP
     });
     planet4 = new THREE.Mesh(gP4, mP4 );
     planet4.position.x = -24;
@@ -212,10 +255,12 @@ init();
 
 animate(0, function () {
     renderer.render(scene, camera);
-    // planet.position.z += 0.5;
-    // planet2.position.z += 0.5;
-    // planet3.position.z += 0.5;
-    // planet4.position.z += 0.5;
+    if (gameStarted) {
+        planet.position.z += 0.5;
+        planet2.position.z += 0.5;
+        planet3.position.z += 0.5;
+        planet4.position.z += 0.5;
+    }
     planet.rotation.y += 0.01;
     // obj.rotation.x += 0.01;
     // obj.rotation.y -= 0.0025;

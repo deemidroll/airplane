@@ -1,0 +1,32 @@
+<!-- Made by deemidroll | 2014 | deemidroll@gmail.com -->
+<!doctype html>
+<html lang="en">
+<head>
+    <title>airplane control</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <link rel="stylesheet" type="text/css" href="../css/mobile.css" charset="utf-8"/>
+    <link rel="icon" type="image/png" href="../img/fav.png">
+</head>
+<body>
+    <!-- prevent screen sleep hack -->
+    <audio id="audioloop" src="../sounds/loop.mp3" onended="this.play();" autobuffer></audio>
+
+    <div id="controller">
+        <!-- start -->
+        <div id="preparetostart">
+            <div id="start">
+                <img class="ui1" src="../img/ui1.svg">
+                <img class="ui2" src="../img/ui2.svg">
+                <div class="info">
+                    Управляйте самолетом,<br>наклоняя устройство
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://192.168.88.117:8080/socket.io/socket.io.js"></script>
+    <script src="../js/zepto.js"></script>
+    <script src="../js/mobile.js"></script>
+</body>
+</html>
