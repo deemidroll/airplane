@@ -30,7 +30,7 @@ $document.on('turn', function (e, data) {
     airplane.rotation.z = Math.PI - data.turn/180;
 });
 
-$document.on('socketConnected', function () {
+$document.on('start', function () {
     $interface.addClass('hidden');
     gameStarted = true;
 

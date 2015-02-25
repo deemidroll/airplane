@@ -9,6 +9,8 @@ $(function() {
         socket,
         $ui2 = $('.ui2');
 
+    var started = false;
+
     console.log('hi');
     server = 'http://192.168.88.117:8080';
 
@@ -29,6 +31,16 @@ $(function() {
         connect(hash.slice(1));
     }
 
+    function onSwipeUp(e) {
+        if (started) return;
+        started = true;
+        // $('#start').off('swipeUp');
+        $('.start').addClass('hidden');
+        $('.control').removeClass('hidden');
+        console.log(e);
+        socket.emit('start', {});
+    }
+
     function orientationHandler (event) {
         var a = event.alpha, // 'direction'
             b = event.beta,  // left/right 'tilt'
@@ -44,10 +56,16 @@ $(function() {
             '-ms-transform': 'rotate(' + -turn + 'deg)',
             'transform': 'rotate(' + -turn + 'deg)'
         });
+
+        $('#start').on('swipeUp', onSwipeUp);
         socket.emit('turn', {'turn':turn, 'g':a});
     }
     // // Steer the vehicle based on the phone orientation
     window.addEventListener('deviceorientation', orientationHandler, false);
+
+    $(document).on('touchmove',function(e){
+        e.preventDefault();
+    });
 });
 
 },{}]},{},["/Users/Dmitry/projects/helicopter/tech/airplane/src/js/mobile.js"])

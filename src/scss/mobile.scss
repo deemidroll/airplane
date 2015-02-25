@@ -79,3 +79,17 @@ body, html {
         // line-height: 29px;
     }
 }
+
+.start {
+    transition: all 0.4s ease 0s;
+}
+
+.control {
+    transition: all 0.4s ease 0s;
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease 0s;
+}

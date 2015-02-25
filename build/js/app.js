@@ -73,7 +73,7 @@ $document.on('turn', function (e, data) {
     airplane.rotation.z = Math.PI - data.turn/180;
 });
 
-$document.on('socketConnected', function () {
+$document.on('start', function () {
     $interface.addClass('hidden');
     gameStarted = true;
 
@@ -363,6 +363,7 @@ ws.init = function() {
     });
     socket.on('start', function(data) {
         console.log('start', data);
+        $document.trigger('start', data);
     });
     // DT.$document.on('changeScore', function (e, data) {
     //     DT.sendMessage({type: 'vibr', time: 10});
