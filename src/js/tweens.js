@@ -6,7 +6,7 @@ tweens.start = function (obj, time) {
     time = time || 1500;
 
     var posX = [10 * 1.5, 20 * 1.5, 10 * 1.5, 0];
-    var posY = [16 * 1.5, 0 * 1.5, -8 * 1.5, -2];
+    var posY = [16 * 1.5, 0 * 1.5, -8 * 1.5, 0];
     var posZ = [-10 * 1.5, 0 * 1.5, 10 * 1.5, 0];
 
     var rotX = [

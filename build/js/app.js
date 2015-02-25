@@ -896,6 +896,7 @@ function init() {
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
     camera.position.y = 0;
     camera.position.z = 30;
+    camera.up = new THREE.Vector3(0,1,0);
     scene.add( camera );
 
     //
@@ -1046,36 +1047,26 @@ init();
 
 var delta = -0.1;
 
+function updateCamera() {
+    var relativeCameraOffset = new THREE.Vector3(0, -80, 600);
+
+    var cameraOffset = relativeCameraOffset.applyMatrix4( airplane.matrixWorld );
+
+    camera.position.x = cameraOffset.x;
+    camera.position.y = cameraOffset.y;
+    camera.position.z = cameraOffset.z;
+    camera.lookAt( airplane.position );
+}
+
 animate(0, function () {
     renderer.render(scene, camera);
     TWEEN.update();
+    // updateCamera();
     if (gameStarted && isControl) {
-        airplane.position.z += delta;
-        camera.position.z += delta;
+        updateCamera();
+        airplane.translateZ( delta );
     }
-    // if (gameStarted) {
-    //     planet.position.z += 0.5;
-    //     planet2.position.z += 0.5;
-    //     planet3.position.z += 0.5;
-    //     planet4.position.z += 0.5;
-    // }
     planet.rotation.y += 0.01;
-    // obj.rotation.x += 0.01;
-    // obj.rotation.y -= 0.0025;
-    // mesh.rotation.x -= 0.001;
-    // mesh.rotation.y -= 0.001;
-    // if (planet.position.z  >10) {
-    //     planet.position.z = -200;
-    // }
-    // if (planet2.position.z  >10) {
-    //     planet2.position.z = -200;
-    // }
-    // if (planet3.position.z  >10) {
-    //     planet3.position.z = -200;
-    // }
-    // if (planet4.position.z  >10) {
-    //     planet4.position.z = -200;
-    // }
 });
 
 },{"./animate.js":"/Users/Dmitry/projects/helicopter/tech/airplane/src/js/animate.js","./socket.js":"/Users/Dmitry/projects/helicopter/tech/airplane/src/js/socket.js","./tweens.js":"/Users/Dmitry/projects/helicopter/tech/airplane/src/js/tweens.js","tween.js":"/Users/Dmitry/projects/helicopter/tech/airplane/node_modules/tween.js/index.js"}],"/Users/Dmitry/projects/helicopter/tech/airplane/src/js/socket.js":[function(require,module,exports){
@@ -1165,7 +1156,7 @@ tweens.start = function (obj, time) {
     time = time || 1500;
 
     var posX = [10 * 1.5, 20 * 1.5, 10 * 1.5, 0];
-    var posY = [16 * 1.5, 0 * 1.5, -8 * 1.5, -2];
+    var posY = [16 * 1.5, 0 * 1.5, -8 * 1.5, 0];
     var posZ = [-10 * 1.5, 0 * 1.5, 10 * 1.5, 0];
 
     var rotX = [
