@@ -62,8 +62,10 @@ html, body {
 .interface {
     &.hidden {
         opacity: 0;
+        top: 15%;
+        // left: -15%;
         visibility: hidden;
-        transition: all 0.4s ease 0s;
+        transition: all 0.75s ease-in-out 0s;
     }
 }
 
