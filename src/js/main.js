@@ -1,5 +1,7 @@
 var Detector = window.Detector;
 var THREE = window.THREE;
+var TWEEN = require('tween.js');
+var tweens = require('./tweens.js');
 var animate = require('./animate.js');
 var socket = require('./socket.js');
 var $ = window.$;
@@ -12,6 +14,7 @@ var $interface = $('.interface');
 socket.init();
 
 var gameStarted = false;
+var isControl = true;
 
 var airplane;
 
@@ -27,20 +30,23 @@ $document.on('socketInitialized', function (e, data) {
 });
 
 $document.on('turn', function (e, data) {
-    airplane.rotation.z = Math.PI - data.turn/180;
+    if (isControl) {
+        airplane.rotation.z = Math.PI - data.turn/180;
+        if (gameStarted) {
+            airplane.rotation.y += -data.turn/180 / 10;
+        }
+    }
 });
 
 $document.on('start', function () {
+    var startTime = 1500;
     $interface.addClass('hidden');
     gameStarted = true;
-
-
-    airplane.rotation.x = Math.PI/12;
-    airplane.rotation.y = 0;
-    airplane.rotation.z = Math.PI;
-
-    airplane.position.x = 0;
-    airplane.position.y = 0;
+    isControl = false;
+    tweens.start(airplane, startTime);
+    setTimeout(function () {
+        isControl = true;
+    }, startTime);
 });
 
 if (! Detector.webgl) Detector.addGetWebGLMessage();
@@ -84,14 +90,11 @@ function init() {
 
     scene = new THREE.Scene();
 
-    // scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
-
     // camera
 
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
     camera.position.y = 0;
     camera.position.z = 30;
-    // camera.setLens ( 0, 100 )
     scene.add( camera );
 
     //
@@ -102,7 +105,6 @@ function init() {
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0x102037 );
-    // renderer.shadowMapEnabled = true;
 
     container.appendChild( renderer.domElement );
 
@@ -117,21 +119,11 @@ function init() {
     var loader = new THREE.OBJLoader(manager);
 
     airplane = new THREE.Object3D();
-    // obj.castShadow = true;
 
     loader.load('./obj/airplane10.obj', function (object) {
-        // white
+
         var color2 = '#F3F3F5',
             color1 = '#B1B2B6';
-        // blue
-        // var color2 = '#4DC8F9',
-            // color1 = '#1880B4';
-        // red
-        // var color2 = '#00BDDA',
-            // color1 = '#13608A';
-        // green
-        // var color2 = '#C2D900',
-            // color1 = '#65BD2E';
 
         var texture = new THREE.Texture(generateTexture(color1, color2));
         var texture2 = new THREE.Texture(generateTexture(color2, color1));
@@ -140,12 +132,14 @@ function init() {
 
         object.children[0].material = new THREE.MeshBasicMaterial({
             map: texture,
+            // color: 0xF3F3F5,
             transparent: true,
             side: THREE.DoubleSide
         });
         var object2 = object.clone();
         object2.children[0].material = new THREE.MeshBasicMaterial({
             map: texture2,
+            // color: 0xF3F3F5,
             transparent: true,
             side: THREE.DoubleSide
         });
@@ -242,40 +236,43 @@ function init() {
     var ambient = new THREE.AmbientLight( 0x344163 );
     scene.add( ambient );
 
-    var sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
     var light = new THREE.PointLight( 0xffffff, 0.75, 500 );
-    light.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0x43FFD9 } ) ) );
-    light.position.y = 8.3;
-    light.position.z = 10;
-    scene.add( light );
-
+    light.position.set(0, 8.3, 10);
+    airplane.add( light );
 }
 
 init();
 
+var delta = -0.1;
+
 animate(0, function () {
     renderer.render(scene, camera);
-    if (gameStarted) {
-        planet.position.z += 0.5;
-        planet2.position.z += 0.5;
-        planet3.position.z += 0.5;
-        planet4.position.z += 0.5;
+    TWEEN.update();
+    if (gameStarted && isControl) {
+        airplane.position.z += delta;
+        camera.position.z += delta;
     }
+    // if (gameStarted) {
+    //     planet.position.z += 0.5;
+    //     planet2.position.z += 0.5;
+    //     planet3.position.z += 0.5;
+    //     planet4.position.z += 0.5;
+    // }
     planet.rotation.y += 0.01;
     // obj.rotation.x += 0.01;
     // obj.rotation.y -= 0.0025;
     // mesh.rotation.x -= 0.001;
     // mesh.rotation.y -= 0.001;
-    if (planet.position.z  >10) {
-        planet.position.z = -200;
-    }
-    if (planet2.position.z  >10) {
-        planet2.position.z = -200;
-    }
-    if (planet3.position.z  >10) {
-        planet3.position.z = -200;
-    }
-    if (planet4.position.z  >10) {
-        planet4.position.z = -200;
-    }
+    // if (planet.position.z  >10) {
+    //     planet.position.z = -200;
+    // }
+    // if (planet2.position.z  >10) {
+    //     planet2.position.z = -200;
+    // }
+    // if (planet3.position.z  >10) {
+    //     planet3.position.z = -200;
+    // }
+    // if (planet4.position.z  >10) {
+    //     planet4.position.z = -200;
+    // }
 });
