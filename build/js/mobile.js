@@ -43,14 +43,22 @@ $(function() {
     }
 
     function orientationHandler (event) {
-        var a = event.alpha, // 'direction'
-            b = event.beta,  // left/right 'tilt'
+        var b = event.beta,  // left/right 'tilt'
             g = event.gamma; // forward/back 'tilt'
 
-        var turn = 0, ori = window.orientation || 0;
-        if (ori === 0) turn = g;
-        if (ori === 90) turn = b;
-        if (ori === -90) turn = -b;
+        var turn = 0, x = 0, ori = window.orientation || 0;
+        if (ori === 0) {
+            turn = g;
+            x = b;
+        }
+        if (ori === 90) {
+            turn = b;
+            x = -g;
+        }
+        if (ori === -90) {
+            turn = -b;
+            x = g;
+        }
 
         $ui2.css({
             '-webkit-transform': 'rotate(' + -turn + 'deg)',
@@ -59,7 +67,7 @@ $(function() {
         });
 
         $('#start').on('swipeUp', onSwipeUp);
-        socket.emit('turn', {'turn':turn, 'g':a});
+        socket.emit('turn', {'turn':turn, 'x':x});
     }
     // // Steer the vehicle based on the phone orientation
     window.addEventListener('deviceorientation', orientationHandler, false);

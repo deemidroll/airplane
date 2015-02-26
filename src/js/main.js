@@ -6,6 +6,8 @@ var animate = require('./animate.js');
 var socket = require('./socket.js');
 var $ = window.$;
 
+if (! Detector.webgl) Detector.addGetWebGLMessage();
+
 var $document = $(document);
 
 var $address = $('#address');
@@ -29,13 +31,11 @@ $document.on('socketInitialized', function (e, data) {
     $address.text(address);
 });
 
+var rot = {x: 0, y: 0, z: 0};
 $document.on('turn', function (e, data) {
-    if (isControl) {
-        airplane.rotation.z = Math.PI - data.turn/180;
-        if (gameStarted) {
-            airplane.rotation.y += -data.turn/180 / 10;
-        }
-    }
+    var turn = -data.turn/90;
+    var x = data.x;
+    rot = {x: (x - 45)/180, y: turn * 2, z: Math.PI + turn};
 });
 
 $document.on('start', function () {
@@ -49,11 +49,7 @@ $document.on('start', function () {
     }, startTime);
 });
 
-if (! Detector.webgl) Detector.addGetWebGLMessage();
-
 var camera, scene, renderer;
-
-var planet, planet2, planet3, planet4;
 
 function onWindowResize() {
 
@@ -161,79 +157,6 @@ function init() {
     });
     scene.add(airplane);
 
-    //pan
-    // var gBG = new THREE.SphereGeometry(20, 60, 40);
-    // gBG.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-
-    // var mBG = new THREE.MeshBasicMaterial({
-    //     map: THREE.ImageUtils.loadTexture( './img/space.png' )
-    // });
-
-    // mesh = new THREE.Mesh( gBG, mBG );
-    // // mesh.position.y = 20;
-    // // mesh.position.z = -100;
-    // scene.add( mesh );
-    var tP = THREE.ImageUtils.loadTexture( './img/noise.jpg' );
-
-    var gP = new THREE.SphereGeometry( 2, 60, 40 );
-    // gP.applyMatrix( new THREE.Matrix4().makeScale( -1, 1, 1 ) );
-
-    var mP = new THREE.MeshLambertMaterial({
-        color: 0x43FFD9,
-        map: tP
-    });
-
-    planet = new THREE.Mesh(gP, mP );
-    planet.position.x = -15;
-    planet.position.y = -7;
-    // planet.position.z = -55;
-    planet.position.z = -5;
-    scene.add( planet );
-
-    var gP2 = new THREE.SphereGeometry( 3, 60, 40 );
-    var mP2 = new THREE.MeshLambertMaterial({
-        color: 0xFE147A,
-        map: tP
-    });
-    planet2 = new THREE.Mesh(gP2, mP2 );
-    planet2.position.x = 22;
-    planet2.position.y = 10;
-    planet2.position.z = -10;
-    scene.add( planet2 );
-
-    var gP3 = new THREE.SphereGeometry( 2, 60, 40 );
-    var mP3 = new THREE.MeshLambertMaterial({
-        color: 0x43FFD9,
-        map: tP
-    });
-    planet3 = new THREE.Mesh(gP3, mP3 );
-    planet3.position.x = 20;
-    planet3.position.y = 1;
-    planet3.position.z = -20;
-    scene.add( planet3 );
-
-    var gP4 = new THREE.SphereGeometry( 2, 60, 40 );
-    var mP4 = new THREE.MeshLambertMaterial({
-        color: 0xE7C08C,
-        map: tP
-    });
-    planet4 = new THREE.Mesh(gP4, mP4 );
-    planet4.position.x = -24;
-    planet4.position.y = 10;
-    planet4.position.z = -30;
-    scene.add( planet4 );
-
-    // var gP5 = new THREE.SphereGeometry( 9, 60, 40 );
-    // var mP5 = new THREE.MeshLambertMaterial({
-    //     color: 0xffffff,
-    // });
-    // planet5 = new THREE.Mesh(gP5, mP5 );
-    // planet5.position.x = 0;
-    // planet5.position.y = 20;
-    // planet5.position.z = -20;
-    // scene.add( planet5 );
-
-
     var ambient = new THREE.AmbientLight( 0x344163 );
     scene.add( ambient );
 
@@ -244,7 +167,39 @@ function init() {
 
 init();
 
-var delta = -0.1;
+function genRandomFloorBetween(min, max) {
+    var rand = min - 0.5 + Math.random()*(max-min+1);
+    rand = Math.round(rand);
+    return rand;
+}
+
+var planets = [];
+var planetTextrure = THREE.ImageUtils.loadTexture( './img/noise.jpg' );
+var planetColors = [0x43FFD9, 0xFE147A, 0xE7C08C];
+var planetSizes = [2, 3, 4];
+
+var Planet = function () {
+    this.geom = new THREE.SphereGeometry( planetSizes[genRandomFloorBetween(0, 2)], 60, 40 );
+    this.mat = new THREE.MeshLambertMaterial({
+        color: planetColors[genRandomFloorBetween(0, 2)],
+        map: planetTextrure
+    });
+    this.mesh = new THREE.Mesh(this.geom, this.mat);
+    this.mesh.position.x = genRandomFloorBetween(-100, 100);
+    this.mesh.position.y = genRandomFloorBetween(-20, 20);
+    // this.mesh.position.z = -55;
+    this.mesh.position.z = genRandomFloorBetween(-100, -10);
+    scene.add( this.mesh );
+};
+
+Planet.prototype.update = function () {
+    this.mesh.rotation.y += 0.01;
+    return this;
+};
+
+for (var i = 0; i < 20; i ++) {
+    planets.push(new Planet());
+}
 
 function updateCamera() {
     var relativeCameraOffset = new THREE.Vector3(0, -80, 600);
@@ -258,12 +213,18 @@ function updateCamera() {
 }
 
 animate(0, function () {
-    renderer.render(scene, camera);
-    TWEEN.update();
     // updateCamera();
     if (gameStarted && isControl) {
         updateCamera();
-        airplane.translateZ( delta );
+        ['x', 'y', 'z'].forEach(function (axis) {
+            var delta = rot[axis] - airplane.rotation[axis];
+            airplane.rotation[axis] += delta/10;
+        });
+        airplane.translateZ( -0.1 );
     }
-    planet.rotation.y += 0.01;
+    planets.forEach(function (planet) {
+        planet.update();
+    });
+    renderer.render(scene, camera);
+    TWEEN.update();
 });
