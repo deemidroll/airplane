@@ -39,6 +39,7 @@ $(function() {
         $('.control').removeClass('hidden');
         console.log(e);
         socket.emit('start', {});
+        $('#audioloop')[0].play();
     }
 
     function orientationHandler (event) {
