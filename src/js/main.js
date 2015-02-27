@@ -21,7 +21,7 @@ var isControl = true;
 var airplane;
 
 $document.on('socketInitialized', function (e, data) {
-    var address = window.location.origin + '/m/#' + data.gameCode;
+    var address = window.location.href + 'm/#' + data.gameCode;
     $('.content-info-qr').qrcode({
         render: 'div',
         size: 150,
